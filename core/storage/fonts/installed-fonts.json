@@ -1,0 +1,25 @@
+{
+    "boxicons": {
+        "normal": "boxicons_normal_74856790363322e3cbd0a6b1e2be90f4"
+    },
+    "public sans": {
+        "100_italic": "C:\\xampp\\htdocs\\satelyte\\core\\storage\\fonts\/public_sans_100_italic_1f45973e94fe1b798f8822eded8c1754",
+        "200_italic": "C:\\xampp\\htdocs\\satelyte\\core\\storage\\fonts\/public_sans_200_italic_bca8fbf93c71386b01409aa60383bdb0",
+        "300_italic": "C:\\xampp\\htdocs\\satelyte\\core\\storage\\fonts\/public_sans_300_italic_8a6fa7261d6dca236227c4f91e333151",
+        "italic": "C:\\xampp\\htdocs\\satelyte\\core\\storage\\fonts\/public_sans_italic_b171d6e6f88795dd0e6f75405f5fa68c",
+        "500_italic": "C:\\xampp\\htdocs\\satelyte\\core\\storage\\fonts\/public_sans_500_italic_62edcaab966f750304c04a14def652d1",
+        "600_italic": "C:\\xampp\\htdocs\\satelyte\\core\\storage\\fonts\/public_sans_600_italic_acc45e5e803f67f45b504c8064bc9e08",
+        "bold_italic": "C:\\xampp\\htdocs\\satelyte\\core\\storage\\fonts\/public_sans_bold_italic_2b50ac2ced778ddda01a5617c54b4121",
+        "800_italic": "C:\\xampp\\htdocs\\satelyte\\core\\storage\\fonts\/public_sans_800_italic_289d7aedde5caeb443dc529ca14cac8f",
+        "900_italic": "C:\\xampp\\htdocs\\satelyte\\core\\storage\\fonts\/public_sans_900_italic_9d3e7934778e4ba073ad8033680476fb",
+        "100": "C:\\xampp\\htdocs\\satelyte\\core\\storage\\fonts\/public_sans_100_9a087dec633a455ea15a8347c6ad3181",
+        "200": "C:\\xampp\\htdocs\\satelyte\\core\\storage\\fonts\/public_sans_200_69f70ea92913c5553a8b6c752e1ee022",
+        "300": "C:\\xampp\\htdocs\\satelyte\\core\\storage\\fonts\/public_sans_300_e40291a1efaf35fadfb14addce7ab6fe",
+        "normal": "C:\\xampp\\htdocs\\satelyte\\core\\storage\\fonts\/public_sans_normal_541b23c84069f88f13682c4de16653d2",
+        "500": "C:\\xampp\\htdocs\\satelyte\\core\\storage\\fonts\/public_sans_500_409c652e5ddfb16fe604a2796364a682",
+        "600": "C:\\xampp\\htdocs\\satelyte\\core\\storage\\fonts\/public_sans_600_f7b0486ca002dc2d2bb6210c153daef1",
+        "bold": "C:\\xampp\\htdocs\\satelyte\\core\\storage\\fonts\/public_sans_bold_afade0e905cec59574bdb032b78d1a35",
+        "800": "C:\\xampp\\htdocs\\satelyte\\core\\storage\\fonts\/public_sans_800_554fda9a466cd8e094cf34bbeb9575a1",
+        "900": "public_sans_900_0d4e4252dcff9749490f4a8fee09f413"
+    }
+}
