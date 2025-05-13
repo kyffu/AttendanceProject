@@ -26,6 +26,20 @@ class PayrollController extends Controller
         if (hasRole(['admin', 'superadmin'])) {
             $users = User::orderBy('name')->get();
         }
+        else if (hasRole(['spv'])) {
+            $users = User::with('attendances')
+            ->where('role', 'Karyawan')
+            ->orWhere('id', auth()->id())
+            ->orderBy('users.name')
+            ->get();
+        } 
+        else if (hasRole(['mandor'])) {
+            $users = User::with('attendances')
+            ->where('role', 'Tukang')
+            ->orWhere('id', auth()->id())
+            ->orderBy('users.name')
+            ->get();
+        } 
         else{
             $users = User::where('id',auth()->user()->id)->firstOrFail();
         }

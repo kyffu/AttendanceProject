@@ -30,7 +30,6 @@ class AttendanceReportController extends Controller
             ->get()
             ->pluck("year");
 
-        // dd($users->toArray());
         return view('attendance.datereport.index', compact('months', 'years'));
     }
 
@@ -50,7 +49,25 @@ class AttendanceReportController extends Controller
         }
         if (hasRole(['admin', 'superadmin'])) {
             $users = User::with('attendances')->orderBy('users.name')->get();
-        } else {
+        } 
+
+        else if (hasRole(['spv'])) {
+            $users = User::with('attendances')
+            ->where('role', 'Karyawan')
+            ->orWhere('id', auth()->id())
+            ->orderBy('users.name')
+            ->get();
+        } 
+
+        else if (hasRole(['mandor'])) {
+            $users = User::with('attendances')
+            ->where('role', 'Tukang')
+            ->orWhere('id', auth()->id())
+            ->orderBy('users.name')
+            ->get();
+        } 
+        
+        else {
             $users = User::with('attendances')->where('id', auth()->user()->id)->get();
         }
 
@@ -110,9 +127,28 @@ class AttendanceReportController extends Controller
             ->pluck("year");
         if (hasRole(['admin', 'superadmin'])) {
             $users = User::orderBy('name')->get();
-        } else {
+        } 
+
+        else if (hasRole(['spv'])) {
+            $users = User::with('attendances')
+            ->where('role', 'Karyawan')
+            ->orWhere('id', auth()->id())
+            ->orderBy('users.name')
+            ->get();
+        } 
+
+        else if (hasRole(['mandor'])) {
+            $users = User::with('attendances')
+            ->where('role', 'Tukang')
+            ->orWhere('id', auth()->id())
+            ->orderBy('users.name')
+            ->get();
+        } 
+        
+        else {
             $users = User::where('id', auth()->user()->id)->firstOrFail();
         }
+        
         return view('attendance.staffreport.index', compact('months', 'years', 'users'));
     }
 

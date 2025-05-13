@@ -239,7 +239,25 @@ class AttendanceController extends Controller
 
     public function validateIndex()
     {
-        $users = User::orderBy('name')->get();
+        if (hasRole(['admin', 'superadmin'])) {
+            $users = User::orderBy('name')->get();
+        }
+        else if (hasRole(['spv'])) {
+            $users = User::orderBy('name')
+            ->join('roles', 'users.role_id', '=', 'roles.id')
+            ->select('users.*')
+            ->where('roles.slug', 'karyawan')
+            ->orWhere('users.id', auth()->id())
+            ->get();
+        }
+        else if (hasRole(['mandor'])) {
+            $users = User::orderBy('name')
+            ->join('roles', 'users.role_id', '=', 'roles.id')
+            ->select('users.*')
+            ->where('roles.slug', 'tukang')
+            ->orWhere('users.id', auth()->id())
+            ->get();
+        }
         return view('attendance.validate.index', compact('users'));
     }
 
@@ -247,7 +265,9 @@ class AttendanceController extends Controller
     {
         $id = Crypt::decryptString($id);
         $attendances = Attendances::where('user_id', $id)->get();
-        $name = User::where('id', $id)->firstOrFail()->value('name');
+        $user = User::where('id', $id)->first();
+        $name = $user['name'];
+
         return view('attendance.validate.view', compact('attendances', 'name'));
     }
 

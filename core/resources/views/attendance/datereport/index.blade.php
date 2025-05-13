@@ -89,6 +89,8 @@
                             $('#col-spinner').hide();
                             $('#report').html(response.html);
                             $('#col-export').show();
+
+                            console.log(response.html)
                             var dateColumnIndices = [];
                             var dates = response.dates;
                             for (var i = 0; i < dates.length; i++) {
@@ -101,6 +103,8 @@
                                     "orderable": false
                                 }]
                             });
+
+                            console.log(dateColumnIndices)
                         },
                         error: function(xhr, status, error) {
                             console.log(error);

@@ -55,14 +55,15 @@
                             @endif
                         </table>
                         <br>
+                        @role(['spv','mandor','superadmin'])
                         <div class="mt-2">
-                             
                                 <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal"
                                     data-bs-target="#absentModal">Validasi</button>
                              
                             <a href="{{ route('attendance.overtime.index') }}" class="btn btn-outline-secondary"
                                 id="btn-back">Kembali</a>
                         </div>
+                        @endrole
                     </div>
                     <!-- /Account -->
                 </div>

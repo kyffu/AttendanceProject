@@ -18,7 +18,29 @@ class OvertimeController extends Controller
     {
         if (hasRole(['admin', 'superadmin'])) {
             $data = Overtimes::orderBy('id')->get();
-        } else {
+        } 
+
+        else if (hasRole(['spv'])) {
+            $data = Overtimes::orderBy('id')
+            ->join('users', 'overtimes.user_id', '=', 'users.id')
+            ->join('roles', 'users.role_id', '=', 'roles.id')
+            ->select('overtimes.*')
+            ->where('roles.slug', 'karyawan')
+            ->orWhere('overtimes.user_id', auth()->user()->id)
+            ->get();
+        } 
+
+        else if (hasRole(['mandor'])) {
+            $data = Overtimes::orderBy('id')
+            ->join('users', 'overtimes.user_id', '=', 'users.id')
+            ->join('roles', 'users.role_id', '=', 'roles.id')
+            ->select('overtimes.*')
+            ->where('roles.slug', 'tukang')
+            ->orWhere('overtimes.user_id', auth()->user()->id)
+            ->get();
+        } 
+        
+        else {
             $data = Overtimes::where('user_id', auth()->user()->id)->get();
         }
         return view('attendance.overtime.index', compact('data'));

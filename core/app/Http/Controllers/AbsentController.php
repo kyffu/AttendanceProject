@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Alert;
+use Validator;
+use Carbon\Carbon;
+use App\Models\User;
+use App\Models\Absents;
 use Illuminate\Http\Request;
 use App\Models\AbsentMasters;
-use App\Models\Absents;
-use Validator;
-use Alert;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Crypt;
 
 class AbsentController extends Controller
@@ -18,12 +19,43 @@ class AbsentController extends Controller
     public function index()
     {
         if (hasRole(['admin', 'superadmin'])) {
-            $absences = Absents::orderBy('start_date')->with('master', 'user_created')->get();
-        }else{
-            $absences = Absents::orderBy('start_date')->where('created_by', auth()->user()->id)->with('master', 'user_created')->get();
+            $absences = Absents::orderBy('start_date')
+            ->join('users', 'absents.created_by', '=', 'users.id')
+            ->join('roles', 'users.role_id', '=', 'roles.id')
+            ->with('master')
+            ->select('absents.*', 'users.name as created_by_name')
+            ->get();
+        }
+        else if (hasRole(['spv'])) {
+            $absences = Absents::orderBy('start_date')
+            ->join('users', 'absents.created_by', '=', 'users.id')
+            ->join('roles', 'users.role_id', '=', 'roles.id')
+            ->with('master')
+            ->select('absents.*', 'users.name as created_by_name')
+            ->where('roles.slug', 'karyawan')
+            ->orWhere('users.id', auth()->id())
+            ->get();
+        } 
+        else if (hasRole(['mandor'])) {
+            $absences = Absents::orderBy('start_date')
+            ->join('users', 'absents.created_by', '=', 'users.id')
+            ->join('roles', 'users.role_id', '=', 'roles.id')
+            ->with('master')
+            ->select('absents.*', 'users.name as created_by_name')
+            ->where('roles.slug', 'tukang')
+            ->orWhere('users.id', auth()->id())
+            ->get();
+        } 
+        else{
+            $absences = Absents::orderBy('start_date')
+            ->join('users', 'absents.created_by', '=', 'users.id')
+            ->join('roles', 'users.role_id', '=', 'roles.id')
+            ->with('master')
+            ->select('absents.*', 'users.name as created_by_name')
+            ->orWhere('users.id', auth()->id())
+            ->get();
         }
         return view('attendance.absent.index', compact('absences'));
-        // dd($absences->toArray());
     }
 
     /**

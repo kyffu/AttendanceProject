@@ -73,13 +73,14 @@
                                 </div>
                             </div>
                         @endif
+                        @role(['spv','mandor','superadmin'])
                         <div class="mt-2">
-                             
-                                <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal"
-                                    data-bs-target="#absentModal">Validasi</button>
-                             
+                            <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal"
+                                data-bs-target="#absentModal">Validasi</button>
+
                             <a href="{{ url()->previous() }}" class="btn btn-outline-secondary" id="btn-back">Kembali</a>
                         </div>
+                        @endrole
                     </div>
                     <!-- /Account -->
                 </div>
@@ -100,49 +101,49 @@
             </div>
         </div>
     </div>
-     
-        <div class="modal fade" id="absentModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="imageModalLabel">Validasi Ketidakhadiran</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form action="{{ route('attendance.absent.validate') }}" method="POST">
-                        @method('PUT')
-                        @csrf
-                        <input type="hidden" name="absence" value="{{ Crypt::encryptString($absent->id) }}">
-                        <div class="modal-body">
-                            <div class="mb-3">
-                                <div class="form-group">
-                                    <label class="form-label" for="basic-default-name">Beri Keterangan</label>
-                                    <textarea class="form-control" name="notes" rows="3">{{ $absent->notes }}</textarea>
-                                    <div class="form-text">Keterangan tidak wajib diisi</div>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <div class="form-group">
-                                    <label class="form-label" for="basic-default-name">Validasi Pengajuan <sup
-                                            style="color: red;">*</sup></label>
-                                    <select name="validation" class="form-select" required>
-                                        <option value="" selected disabled>Pilih Status Validasi</option>
-                                        <option value="{{ Crypt::encryptString(1) }}"
-                                            {{ $absent->status == 1 ? 'selected' : '' }}>Setujui</option>
-                                        <option value="{{ Crypt::encryptString(2) }}"
-                                            {{ $absent->status == 2 ? 'selected' : '' }}>Tolak</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <hr>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-success me-2">Validasi</button>
-                        </div>
-                    </form>
+
+    <div class="modal fade" id="absentModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel">Validasi Ketidakhadiran</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+                <form action="{{ route('attendance.absent.validate') }}" method="POST">
+                    @method('PUT')
+                    @csrf
+                    <input type="hidden" name="absence" value="{{ Crypt::encryptString($absent->id) }}">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <div class="form-group">
+                                <label class="form-label" for="basic-default-name">Beri Keterangan</label>
+                                <textarea class="form-control" name="notes" rows="3">{{ $absent->notes }}</textarea>
+                                <div class="form-text">Keterangan tidak wajib diisi</div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-group">
+                                <label class="form-label" for="basic-default-name">Validasi Pengajuan <sup
+                                        style="color: red;">*</sup></label>
+                                <select name="validation" class="form-select" required>
+                                    <option value="" selected disabled>Pilih Status Validasi</option>
+                                    <option value="{{ Crypt::encryptString(1) }}"
+                                        {{ $absent->status == 1 ? 'selected' : '' }}>Setujui</option>
+                                    <option value="{{ Crypt::encryptString(2) }}"
+                                        {{ $absent->status == 2 ? 'selected' : '' }}>Tolak</option>
+                                </select>
+                            </div>
+                        </div>
+                        <hr>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success me-2">Validasi</button>
+                    </div>
+                </form>
             </div>
         </div>
-     
+    </div>
+
 @stop
 @push('scripts')
     <script type="text/javascript">

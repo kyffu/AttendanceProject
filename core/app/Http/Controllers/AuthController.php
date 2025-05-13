@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Alert;
+use App\Models\Roles;
 use Validator;
 use Illuminate\Support\Facades\Auth;
 
@@ -43,8 +44,24 @@ class AuthController extends Controller
             Auth::attempt($data);
             if (Auth::check()) { 
                 //Login Success
-                Alert::success('Login Successfully', 'Welcome, '.Auth::user()->name."" );
-                return redirect()->route('attendance.index');
+                // Alert::success('Login Successfully', 'Welcome, '.Auth::user()->name."" );
+                // return redirect()->route('attendance.index');
+                $check_role = Roles::where('id', Auth::user()->role_id)->firstOrFail();
+
+                if($check_role->slug == 'admin'){
+                    return redirect()->route('user.index');
+                } 
+
+                if($check_role->slug == 'pm'){
+                    return redirect()->route('project.index');
+                } 
+                
+                else {
+                    return redirect()->route('attendance.index');
+                }
+
+                
+
                 
             } else {
                 //Login Fail
