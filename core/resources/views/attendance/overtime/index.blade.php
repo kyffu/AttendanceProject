@@ -19,6 +19,7 @@
                                 <th>Tanggal</th>
                                 <th>Durasi</th>
                                 <th>Status</th>
+                                <th>Pemohon</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -40,6 +41,9 @@
                                     <td>
                                         <span class="badge bg-label-{{$item->status == 'pending' ? 'secondary' : ($item->status == 'approved' ? 'primary' : 'danger') }} me-1">
                                             {{strtoupper($item->status) }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="fw-medium">{{ $item->name }}</span>
                                     </td>
                                     <td>
                                         <a class="footer-link me-4" href="{{route('attendance.overtime.detail', Crypt::encryptString($item->id))}}"><i

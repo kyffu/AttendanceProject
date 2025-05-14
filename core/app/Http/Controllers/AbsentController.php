@@ -21,38 +21,26 @@ class AbsentController extends Controller
         if (hasRole(['admin', 'superadmin'])) {
             $absences = Absents::orderBy('start_date')
             ->join('users', 'absents.created_by', '=', 'users.id')
-            ->join('roles', 'users.role_id', '=', 'roles.id')
             ->with('master')
             ->select('absents.*', 'users.name as created_by_name')
             ->get();
         }
-        else if (hasRole(['spv'])) {
+        else if (hasRole(['spv', 'mandor'])) {
             $absences = Absents::orderBy('start_date')
             ->join('users', 'absents.created_by', '=', 'users.id')
             ->join('roles', 'users.role_id', '=', 'roles.id')
             ->with('master')
             ->select('absents.*', 'users.name as created_by_name')
-            ->where('roles.slug', 'karyawan')
-            ->orWhere('users.id', auth()->id())
-            ->get();
-        } 
-        else if (hasRole(['mandor'])) {
-            $absences = Absents::orderBy('start_date')
-            ->join('users', 'absents.created_by', '=', 'users.id')
-            ->join('roles', 'users.role_id', '=', 'roles.id')
-            ->with('master')
-            ->select('absents.*', 'users.name as created_by_name')
-            ->where('roles.slug', 'tukang')
-            ->orWhere('users.id', auth()->id())
+            ->where('users.id', auth()->user()->id)
+            ->orWhere('users.parent_id', auth()->user()->id)
             ->get();
         } 
         else{
             $absences = Absents::orderBy('start_date')
             ->join('users', 'absents.created_by', '=', 'users.id')
-            ->join('roles', 'users.role_id', '=', 'roles.id')
             ->with('master')
             ->select('absents.*', 'users.name as created_by_name')
-            ->orWhere('users.id', auth()->id())
+            ->orWhere('users.id', auth()->user()->id)
             ->get();
         }
         return view('attendance.absent.index', compact('absences'));

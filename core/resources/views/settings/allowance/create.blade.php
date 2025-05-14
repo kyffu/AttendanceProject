@@ -24,7 +24,13 @@
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label" for="basic-default-name">Jumlah Tunjangan</label>
                                 <div class="col-sm-10">
-                                    <input type="text" name="amount" class="form-control amount" id="amount">
+                                    <input type="text" name="amount" class="form-control amount" id="amount" placeholder="Isikan Jumlah Tunjangan">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label" for="basic-default-name">Jumlah Kuota</label>
+                                <div class="col-sm-10">
+                                    <input type="number" name="quota" class="form-control quota" id="quota" placeholder="Isikan Jumlah Kuota">
                                 </div>
                             </div>
                             <div class="d-flex justify-content-end">

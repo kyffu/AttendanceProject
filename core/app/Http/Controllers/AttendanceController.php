@@ -242,20 +242,11 @@ class AttendanceController extends Controller
         if (hasRole(['admin', 'superadmin'])) {
             $users = User::orderBy('name')->get();
         }
-        else if (hasRole(['spv'])) {
+        else if (hasRole(['spv', 'mandor'])) {
             $users = User::orderBy('name')
-            ->join('roles', 'users.role_id', '=', 'roles.id')
             ->select('users.*')
-            ->where('roles.slug', 'karyawan')
-            ->orWhere('users.id', auth()->id())
-            ->get();
-        }
-        else if (hasRole(['mandor'])) {
-            $users = User::orderBy('name')
-            ->join('roles', 'users.role_id', '=', 'roles.id')
-            ->select('users.*')
-            ->where('roles.slug', 'tukang')
-            ->orWhere('users.id', auth()->id())
+            ->where('users.id', auth()->id())
+            ->orWhere('users.parent_id', auth()->id())
             ->get();
         }
         return view('attendance.validate.index', compact('users'));

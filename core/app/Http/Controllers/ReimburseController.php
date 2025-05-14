@@ -17,9 +17,23 @@ class ReimburseController extends Controller
     public function index()
     {
         if (hasRole(['admin', 'superadmin'])) {
-            $data = Reimbursments::orderBy('id')->get();
+            $data = Reimbursments::orderBy('id')
+            ->join('users', 'reimbursments.user_id', '=', 'users.id')
+            ->select('reimbursments.*', 'users.name')
+            ->get();
+        } else if (hasRole(['spv', 'mandor'])) {
+            $data = Reimbursments::orderBy('id')
+            ->join('users', 'reimbursments.user_id', '=', 'users.id')
+            ->select('reimbursments.*', 'users.name')
+            ->where('users.parent_id', auth()->user()->id)
+            ->orWhere('users.id', auth()->user()->id)
+            ->get();
         } else {
-            $data = Reimbursments::where('user_id', auth()->user()->id)->get();
+            $data = Reimbursments::orderBy('id')
+            ->join('users', 'reimbursments.user_id', '=', 'users.id')
+            ->select('reimbursments.*', 'users.name')
+            ->where('users.id', auth()->user()->id)
+            ->get();
         }
         return view('attendance.reimburse.index', compact('data'));
     }

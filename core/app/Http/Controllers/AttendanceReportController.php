@@ -51,18 +51,10 @@ class AttendanceReportController extends Controller
             $users = User::with('attendances')->orderBy('users.name')->get();
         } 
 
-        else if (hasRole(['spv'])) {
+        else if (hasRole(['spv', 'mandor'])) {
             $users = User::with('attendances')
-            ->where('role', 'Karyawan')
-            ->orWhere('id', auth()->id())
-            ->orderBy('users.name')
-            ->get();
-        } 
-
-        else if (hasRole(['mandor'])) {
-            $users = User::with('attendances')
-            ->where('role', 'Tukang')
-            ->orWhere('id', auth()->id())
+            ->where('users.parent_id', auth()->user()->id)
+            ->orWhere('users.id', auth()->user()->id)
             ->orderBy('users.name')
             ->get();
         } 
@@ -129,18 +121,10 @@ class AttendanceReportController extends Controller
             $users = User::orderBy('name')->get();
         } 
 
-        else if (hasRole(['spv'])) {
+        else if (hasRole(['spv', 'mandor'])) {
             $users = User::with('attendances')
-            ->where('role', 'Karyawan')
-            ->orWhere('id', auth()->id())
-            ->orderBy('users.name')
-            ->get();
-        } 
-
-        else if (hasRole(['mandor'])) {
-            $users = User::with('attendances')
-            ->where('role', 'Tukang')
-            ->orWhere('id', auth()->id())
+            ->where('users.parent_id', auth()->user()->id)
+            ->orWhere('users.id', auth()->user()->id)
             ->orderBy('users.name')
             ->get();
         } 

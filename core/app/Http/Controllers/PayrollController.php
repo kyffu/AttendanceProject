@@ -26,17 +26,10 @@ class PayrollController extends Controller
         if (hasRole(['admin', 'superadmin'])) {
             $users = User::orderBy('name')->get();
         }
-        else if (hasRole(['spv'])) {
+        else if (hasRole(['spv', 'mandor'])) {
             $users = User::with('attendances')
-            ->where('role', 'Karyawan')
-            ->orWhere('id', auth()->id())
-            ->orderBy('users.name')
-            ->get();
-        } 
-        else if (hasRole(['mandor'])) {
-            $users = User::with('attendances')
-            ->where('role', 'Tukang')
-            ->orWhere('id', auth()->id())
+            ->where('users.parent_id', auth()->user()->id)
+            ->orWhere('users.id', auth()->user()->id)
             ->orderBy('users.name')
             ->get();
         } 
@@ -59,7 +52,24 @@ class PayrollController extends Controller
             ->whereYear('created_at', $year)
             ->get();
         $username = User::where('id', $user)->firstOrFail()->value('name');
-        $allowances = Allowances::orderBy('id')->get();
+        // $allowances = Allowances::orderBy('id')->get();
+
+        // Subquery to calculate used quota from allowance_payrolls
+        $usedQuotaSub = DB::table('allowance_payrolls')
+            ->selectRaw('allow_id, COUNT(id) as cnt')
+            ->where('employee_id', $user)
+            ->whereRaw('LEFT(period, 4) = ?', [$year])
+            ->groupBy('allow_id');
+
+        // Main query to get the allowances with the used quota
+        $allowances = DB::table('allowances as a')
+            ->leftJoinSub($usedQuotaSub, 't', 't.allow_id', '=', 'a.id')
+            ->select('a.id', 'a.name', 'a.quota', 'a.amount', DB::raw('COALESCE(t.cnt, 0) as used_quota'))  // Explicitly select columns and aggregate
+            ->havingRaw('a.quota > COALESCE(SUM(t.cnt), 0)')
+            ->groupBy('a.id', 'a.name', 'a.quota', 'a.amount')  // Group by the selected columns
+            ->get();
+
+        // Render HTML view with the necessary data
         $html = view('reports.payroll.month', compact('year', 'months', 'username', 'user', 'allowances'))->render();
         return response()->json(['html' => $html], 200);
     }

@@ -18,7 +18,7 @@ class UserController extends Controller
     public function index()
     {
         if (hasRole(['admin', 'superadmin'])) {
-            $users = User::orderBy('id')->get();
+            $users = User::orderBy('id')->get();            
         }else{
             $users = User::where('id', auth()->user()->id)->get();
         }
@@ -38,12 +38,21 @@ class UserController extends Controller
         )
         ->get();
 
-        return view('user.create', compact('shifts', 'positions', 'roles'));
+        $parents = User::orderBy('id')
+            ->join('roles', 'users.role_id', '=', 'roles.id')
+            ->select('users.*', 'roles.slug')
+            ->where('roles.slug', 'mandor')
+            ->orWhere('roles.slug', 'spv')
+            ->get();
+
+        return view('user.create', compact('shifts', 'positions', 'roles', 'parents'));
     }
 
     public function store(Request $request)
     {
         try {
+
+            // dd($request->all());
 
             $rules = [
                 'name' => 'required|min:3|max:35',
@@ -52,7 +61,8 @@ class UserController extends Controller
                 'passwordb' => 'required|same:passworda',
                 'shift' => 'required',
                 'position' => 'required',
-                'roles' => 'required'
+                'roles' => 'required',
+                'parent' => 'nullable'
             ];
 
             $messages = [
@@ -92,6 +102,11 @@ class UserController extends Controller
                 'role' => $role->name,
                 'role_id' => $role->id,
             ];
+
+            if ($request->parent) {
+                $data['parent_id'] = Crypt::decryptString($request->parent);
+            }
+
             User::create($data);
             Alert::success('New User Created successfully', 'User has been created for : ' . $request->name);
             return redirect()->route('user.index');
@@ -115,7 +130,14 @@ class UserController extends Controller
             'roles.name'
         )
         ->get();
-        return view('user.detail', compact('user', 'shifts', 'positions', 'roles'));
+        
+        $parents = User::orderBy('id')
+            ->join('roles', 'users.role_id', '=', 'roles.id')
+            ->select('users.*', 'roles.slug')
+            ->where('roles.slug', 'mandor')
+            ->orWhere('roles.slug', 'spv')
+            ->get();
+        return view('user.detail', compact('user', 'shifts', 'positions', 'roles', 'parents'));
     }
 
     public function update(Request $request)
@@ -128,7 +150,8 @@ class UserController extends Controller
                 'status' => 'required',
                 'shift' => 'required',
                 'position' => 'required',
-                'roles' => 'required'
+                'roles' => 'required',
+                'parent' => 'nullable'
             ];
             $messages = [
                 'name.required' => ' Full Name must be filled!',
@@ -141,10 +164,6 @@ class UserController extends Controller
                 'position.required' => 'Posisi Kerja harus diisi!',
                 'roles.required' => 'Role harus diisi!',
             ];
-
-            $request->merge([
-                'roles' => Crypt::encryptString($request->roles)
-            ]);
             
             $validator = Validator::make($request->all(), $rules, $messages);
 
@@ -153,8 +172,7 @@ class UserController extends Controller
                 return redirect()->back();
             }
 
-            $role_id = Crypt::decryptString($request->roles);        
-            $role = Roles::where('id', $role_id)->firstOrFail();
+            $role = Roles::where('id', $request->roles)->firstOrFail();
 
             $position_id = Crypt::decryptString($request->position);        
             $position = JobPositions::where('id', $position_id)->firstOrFail();
@@ -168,6 +186,7 @@ class UserController extends Controller
                 'position_id' => Crypt::decryptString($request->position),
                 'role' => $role->name,
                 'role_id' => $role->id,
+                'parent_id' => $request->parent
             ]);
             Alert::success('User updated successfully', 'User has been updated for : ' . $request->name);
             return redirect()->route('user.index');

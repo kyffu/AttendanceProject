@@ -43,12 +43,14 @@ class AllowanceController extends Controller
         $rules = [
             'allowance_name' => 'required',
             'amount' => 'required',
+            'quota' => 'required',
         ];
 
         $messages = [
 
             'allowance_name.required' => ' Nama tunjangan harus diisi!',
             'amount.required' => ' Jumlah tunjangan harus diisi!',
+            'quota.required' => ' Jumlah kuota harus diisi!',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -60,6 +62,7 @@ class AllowanceController extends Controller
             $data = [
                 'name' => $request->allowance_name,
                 'amount' => $request->amount,
+                'quota' => $request->quota,
             ];
             Allowances::create($data);
             Alert::success('Berhasil', 'Tunjangan berhasil ditambahkan');
@@ -89,12 +92,14 @@ class AllowanceController extends Controller
         $rules = [
             'allowance_name' => 'required',
             'amount' => 'required',
+            'quota' => 'required',
         ];
 
         $messages = [
 
             'allowance_name.required' => ' Nama tunjangan harus diisi!',
             'amount.required' => ' Jumlah tunjangan harus diisi!',
+            'quota.required' => ' Jumlah kuota harus diisi!',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -106,6 +111,7 @@ class AllowanceController extends Controller
             $data = [
                 'name' => $request->allowance_name,
                 'amount' => $request->amount,
+                'quota' => $request->quota
             ];
             Allowances::where('id', Crypt::decryptString($request->allow))->firstOrFail()->update($data);
             Alert::success('Berhasil', 'Tunjangan berhasil diperbarui');

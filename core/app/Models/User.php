@@ -25,7 +25,8 @@ class User extends Authenticatable
         'shift_id',
         'position_id',
         'role',
-        'role_id'
+        'role_id',
+        'parent_id'
     ];
 
     /**

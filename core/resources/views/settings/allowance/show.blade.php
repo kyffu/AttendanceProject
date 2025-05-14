@@ -26,6 +26,13 @@
                                         value="{{ $allowance->amount }}" required>
                                 </div>
                             </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label" for="basic-default-name">Jumlah Kuota</label>
+                                <div class="col-sm-10">
+                                    <input type="number" name="quota" class="form-control quota" id="quota"
+                                        value="{{ $allowance->quota }}" required>
+                                </div>
+                            </div>
                             <div class="mt-2">
                                 <button type="button" id="btn-edit" class="btn btn-primary me-2">Ubah</button>
                                 <button type="submit" id="btn-submit" style="display: none;"
@@ -84,6 +91,7 @@
             AutoNumeric.multiple(".amount", null, numericOptions);
             $("#description").prop('disabled', true);
             $("#amount").prop('disabled', true);
+            $("#quota").prop('disabled', true);
 
             $("#btn-edit").click(function(event) {
                 event.preventDefault();
@@ -93,6 +101,7 @@
                 $("#btn-cancel").show();
                 $("#description").prop('disabled', false);
                 $("#amount").prop('disabled', false);
+                $("#quota").prop('disabled', false);
             });
             $('#btn-cancel').click(function(event) {
                 event.preventDefault();
@@ -102,6 +111,7 @@
                 $("#btn-cancel").hide();
                 $("#description").prop('disabled', true);
                 $("#amount").prop('disabled', true);
+                $("#quota").prop('disabled', true);
             });
         });
     </script>

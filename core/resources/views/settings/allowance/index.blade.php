@@ -17,7 +17,8 @@
                             <tr>
                                 <th width="1%">No</th>
                                 <th>Deskripsi</th>
-                                <th>Jumlah Gaji</th>
+                                <th>Jumlah Tunjangan</th>
+                                <th>Kuota</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -35,6 +36,9 @@
                                     </td>
                                     <td>
                                         <span class="fw-medium amount">{{ $allowance->amount }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="fw-medium">{{ $allowance->quota }} </span>
                                     </td>
                                     <td>
                                         <a class="footer-link me-4" href="{{route('settings.allowance.detail', Crypt::encryptString($allowance->id))}}"><i

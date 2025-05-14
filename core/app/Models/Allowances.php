@@ -12,6 +12,7 @@ class Allowances extends Model
     protected $fillable = [
         'name',
         'amount',
-        'is_active'
+        'is_active',
+        'quota'
     ];
 }

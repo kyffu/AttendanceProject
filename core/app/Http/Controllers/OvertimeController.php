@@ -17,31 +17,31 @@ class OvertimeController extends Controller
     public function index()
     {
         if (hasRole(['admin', 'superadmin'])) {
-            $data = Overtimes::orderBy('id')->get();
-        } 
 
-        else if (hasRole(['spv'])) {
             $data = Overtimes::orderBy('id')
             ->join('users', 'overtimes.user_id', '=', 'users.id')
             ->join('roles', 'users.role_id', '=', 'roles.id')
-            ->select('overtimes.*')
-            ->where('roles.slug', 'karyawan')
-            ->orWhere('overtimes.user_id', auth()->user()->id)
+            ->select('overtimes.*', 'users.name')
             ->get();
         } 
 
-        else if (hasRole(['mandor'])) {
+        else if (hasRole(['spv', 'mandor'])) {
             $data = Overtimes::orderBy('id')
             ->join('users', 'overtimes.user_id', '=', 'users.id')
             ->join('roles', 'users.role_id', '=', 'roles.id')
-            ->select('overtimes.*')
-            ->where('roles.slug', 'tukang')
-            ->orWhere('overtimes.user_id', auth()->user()->id)
+            ->select('overtimes.*', 'users.name')
+            ->where('overtimes.user_id', auth()->user()->id)
+            ->orWhere('users.parent_id', auth()->user()->id)
             ->get();
         } 
         
         else {
-            $data = Overtimes::where('user_id', auth()->user()->id)->get();
+            $data = Overtimes::orderBy('id')
+            ->join('users', 'overtimes.user_id', '=', 'users.id')
+            ->join('roles', 'users.role_id', '=', 'roles.id')
+            ->select('overtimes.*', 'users.name')
+            ->where('overtimes.user_id', auth()->user()->id)
+            ->get();
         }
         return view('attendance.overtime.index', compact('data'));
     }

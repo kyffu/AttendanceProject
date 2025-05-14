@@ -15,7 +15,7 @@
                 </div>
                 <hr class="my-0" />
                 <div class="card-body">
-                    <form action="{{ route('user.update') }}" method="POST">
+                    <form action="{{ route('user.update') }}" method="POST" id='form-user'>
                         @csrf
                         @method('PUT')
                         <input type="hidden" name="uuid" value="{{ Crypt::encryptString($user->id) }}" />
@@ -81,14 +81,28 @@
                                 <label class="form-label">Role Pengguna</label>
                                 <select name="roles" id="role" class="form-select" disabled>
                                     @foreach ($roles as $role)
-                                        <option value="{{ Crypt::encryptString($role->id) }}"
+                                        <option value="{{ ($role->id) }}"
                                             {{ $user->role_id == $role->id ? 'selected' : '' }}>
                                             {{ $role->name }}
                                         </option>
                                     @endforeach
                                 </select>
-                                <input type="hidden" id="roles-hidden" name="roles" value="{{ Crypt::encryptString($user->role_id) }}">
+                                <input type="hidden" id="roles-hidden" name="roles" value="{{ ($user->role_id) }}">
                             </div>
+                            <div class="mb-3 col-md-6" id='row-mandor' {{ $user->role == 'Karyawan' || $user->role == 'Tukang' ? '' : 'hidden' }}>
+                                <label class="form-label">Mandor/ Supervisor</label>
+                                <select name="parent" id="parent" class="form-select" disabled>
+                                    <option value="" selected>Pilih Mandor/ Supervisor Karyawan</option>
+                                    @foreach ($parents as $parent)
+                                        <option value="{{ ($parent->id) }}" data-slug="{{ $parent->slug }}"
+                                            {{ $user->parent_id == $parent->id ? 'selected' : '' }}>
+                                            {{ $parent->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <input type="hidden" id="parent-hidden" name="parent" value="{{ ($user->parent_id) }}">
+                            </div>
+
                         </div>
                         <div class="mt-2">
                              @role(['superadmin', 'admin'])
@@ -160,33 +174,92 @@
 
 @push('scripts')
 <script type="text/javascript">
-    document.getElementById('position').addEventListener('change', function () {
+
+    const positionSelect = document.getElementById('position');
+    const roleSelect = document.getElementById('role');
+    const parentSelect = document.getElementById('parent');
+    const parentHidden = document.getElementById('parent-hidden');
+    const rolesHidden = document.getElementById('roles-hidden');
+    const form = document.getElementById('form-user');
+    const mandor = document.getElementById('row-mandor');
+
+    // Simpan semua option parent secara statis di awal
+    const allParentOptions = Array.from(parentSelect.querySelectorAll('option'));
+
+    positionSelect.addEventListener('change', function () {
         const selectedOption = this.options[this.selectedIndex];
         const roleId = selectedOption.getAttribute('data-role-id');
         const roleName = selectedOption.getAttribute('data-role-name');
-        document.getElementById('roles-hidden').value = roleId;
-        const roleSelect = document.getElementById('role');
+
+        // Update Role Jabatan
         roleSelect.innerHTML = `<option value="${roleId}">${roleName}</option>`;
+        rolesHidden.value = roleId;
+
+        // Tentukan slug berdasarkan role name
+        let filteredSlug = '';
+        if (roleName.toLowerCase() === 'karyawan') {
+            filteredSlug = 'spv';
+            mandor.hidden = false
+        } else if (roleName.toLowerCase() === 'tukang') {
+            filteredSlug = 'mandor';
+            mandor.hidden = false
+        } else {
+            mandor.hidden = true
+            parentHidden.value = null
+        }
+
+        console.log(rolesHidden.value);
+
+        // Selalu mulai dari semua option original
+        let optionsHtml = '<option value="" selected disabled>Pilih Mandor/ Supervisor Karyawan</option>';
+        allParentOptions.forEach(option => {
+            const slug = option.getAttribute('data-slug');
+            if (filteredSlug && slug === filteredSlug) {
+                optionsHtml += `<option value="${option.value}">${option.textContent}</option>`;
+            }
+        });
+        parentSelect.innerHTML = optionsHtml;
+
+        
     });
 
-    $(document).ready(function () {
-        $("#btn-edit").click(function (event) {
-            event.preventDefault();
-            $("#btn-edit").hide();
-            $("#btn-back").hide();
-            $("#btn-submit").show();
-            $("#btn-cancel").show();
-            
-            $("#name, #email, #status, #shift, #position").prop('disabled', false);
-        });
+    parentSelect.addEventListener('change', function(x){
+        parentHidden.value = x.target.value
+    });
 
-        $("#btn-cancel").click(function (event) {
-            event.preventDefault();
-            $("#btn-edit").show();
-            $("#btn-back").show();
-            $("#btn-submit, #btn-cancel").hide();
-            $("#name, #email, #status, #shift, #position").prop('disabled', true);
+
+    form.addEventListener('reset', function() {
+        roleSelect.innerHTML = '<option value="">Pilih Posisi Karyawan</option>';
+        roleSelect.disabled = true;
+
+        // Reset ke semua option parent
+        parentSelect.innerHTML = '<option value="" selected disabled>Pilih Mandor/ Supervisor Karyawan</option>';
+        allParentOptions.forEach(option => {
+            if (option.value) {
+                parentSelect.innerHTML += `<option value="${option.value}" data-slug="${option.getAttribute('data-slug')}">${option.textContent}</option>`;
+            }
         });
     });
+
+    document.getElementById('btn-edit').addEventListener('click', function() {
+        form.querySelectorAll('input:not([type="hidden"]):not(#role), select:not(#role)').forEach(el => {
+            el.disabled = false;
+        });
+
+        this.style.display = 'none';
+        document.getElementById('btn-submit').style.display = 'inline-block';
+        document.getElementById('btn-cancel').style.display = 'inline-block';
+    });
+
+    document.getElementById('btn-cancel').addEventListener('click', function() {
+        form.reset();
+        form.querySelectorAll('input:not([type="hidden"]), select').forEach(el => {
+            el.disabled = true;
+        });
+        document.getElementById('btn-edit').style.display = 'inline-block';
+        document.getElementById('btn-submit').style.display = 'none';
+        this.style.display = 'none';
+    });
+
 </script>
 @endpush

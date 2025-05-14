@@ -11,7 +11,7 @@
                         <h5 class="mb-0">Add User</h5>
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="{{ route('user.store') }}">
+                        <form method="POST" action="{{ route('user.store') }}" id="form-user">
                             @method('POST')
                             @csrf
                             <div class="row mb-3">
@@ -82,6 +82,17 @@
                                     <input type="hidden" id="roles-hidden" name="roles" value="{{ Crypt::encryptString($position->role_id) }}">
                                 </div>
                             </div>
+                            <div class="row mb-3" id="row-mandor" hidden>
+                                <label class="col-sm-2 col-form-label" for="parent">Mandor/ Supervisor</label>
+                                <div class="col-sm-10">
+                                    <select name="parent" id="parent" class="form-select">
+                                        <option value="" selected disabled>Pilih Mandor/ Supervisor Karyawan</option>
+                                        @foreach ($parents as $parent)
+                                            <option value="{{ Crypt::encryptString($parent->id) }}" data-slug="{{ $parent->slug }}">{{ $parent->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
 
                             <div class="d-flex justify-content-end">
                                 <button type="submit" class="btn btn-primary me-1 mb-1">Send</button>
@@ -102,25 +113,62 @@
     document.addEventListener('DOMContentLoaded', function() {
         const positionSelect = document.getElementById('position');
         const roleSelect = document.getElementById('role');
+        const parentSelect = document.getElementById('parent');
+        const rolesHidden = document.getElementById('roles-hidden');
+        const form = document.getElementById('form-user');
+        const mandor = document.getElementById('row-mandor');
 
-        positionSelect.addEventListener('change', function() {
-            // Ambil data-role-id dan data-role-name dari option yang dipilih
-            const selectedRoleId = positionSelect.options[positionSelect.selectedIndex].getAttribute('data-role-id');
-            const selectedRoleName = positionSelect.options[positionSelect.selectedIndex].getAttribute('data-role-name');
+        // Simpan semua option parent secara statis di awal
+        const allParentOptions = Array.from(parentSelect.querySelectorAll('option'));
 
-            // Update value dan option di role select
-            roleSelect.value = selectedRoleId;
-            roleSelect.innerHTML = `<option value="${selectedRoleId}">${selectedRoleName}</option>`;
+        positionSelect.addEventListener('change', function () {
+            const selectedOption = this.options[this.selectedIndex];
+            const roleId = selectedOption.getAttribute('data-role-id');
+            const roleName = selectedOption.getAttribute('data-role-name');
+
+            // Update Role Jabatan
+            roleSelect.innerHTML = `<option value="${roleId}">${roleName}</option>`;
+            rolesHidden.value = roleId;
+
+            // Tentukan slug berdasarkan role name
+            let filteredSlug = '';
+            if (roleName.toLowerCase() === 'karyawan') {
+                filteredSlug = 'spv';
+                mandor.hidden = false
+            } else if (roleName.toLowerCase() === 'tukang') {
+                filteredSlug = 'mandor';
+                mandor.hidden = false
+            } else {
+                mandor.hidden = true
+            }
+
+            // Selalu mulai dari semua option original
+            let optionsHtml = '<option value="" selected disabled>Pilih Mandor/ Supervisor Karyawan</option>';
+            allParentOptions.forEach(option => {
+                const slug = option.getAttribute('data-slug');
+                if (filteredSlug && slug === filteredSlug) {
+                    optionsHtml += `<option value="${option.value}">${option.textContent}</option>`;
+                }
+            });
+            parentSelect.innerHTML = optionsHtml;
+        });
+
+        form.addEventListener('reset', function() {
+            roleSelect.innerHTML = '<option value="">Pilih Posisi terlebih dahulu</option>';
+            roleSelect.disabled = true;
+            rolesHidden.value = '';
+            mandor.hidden(true)
+
+            // Reset ke semua option parent
+            parentSelect.innerHTML = '<option value="" selected disabled>Pilih Mandor/ Supervisor Karyawan</option>';
+            allParentOptions.forEach(option => {
+                if (option.value) {
+                    parentSelect.innerHTML += `<option value="${option.value}" data-slug="${option.getAttribute('data-slug')}">${option.textContent}</option>`;
+                }
+            });
         });
     });
 
-    document.getElementById('position').addEventListener('change', function () {
-        const selectedOption = this.options[this.selectedIndex];
-        const roleId = selectedOption.getAttribute('data-role-id');
-        const roleName = selectedOption.getAttribute('data-role-name');
-        document.getElementById('roles-hidden').value = roleId;
-        const roleSelect = document.getElementById('role');
-        roleSelect.innerHTML = `<option value="${roleId}">${roleName}</option>`;
-    });
 </script>
 @endpush
+
