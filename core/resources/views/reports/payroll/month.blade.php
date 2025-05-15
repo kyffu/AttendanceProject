@@ -67,7 +67,7 @@
                             <select name="allow" id="" class="form-select" required>
                                 <option value="">Pilih Tunjangan</option>
                                 @foreach ($allowances as $allowance)
-                                    <option value="{{Crypt::encryptString($allowance->id)}}" data-wolla="{{ $allowance->id }}">{{$allowance->name}} - Rp{{number_format($allowance->amount, 0, ",", ".")}}</option>
+                                    <option value="{{Crypt::encryptString($allowance->id)}}" data-wolla="{{ $allowance->id }}" {{ ($allowance->quota - $allowance->used_quota) <= 0 ? 'disabled' : '' }}>{{$allowance->name}} - Rp{{number_format($allowance->amount, 0, ",", ".")}}</option>
                                 @endforeach
                             </select>
                         </div>

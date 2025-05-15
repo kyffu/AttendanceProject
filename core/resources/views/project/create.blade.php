@@ -106,6 +106,9 @@ document.addEventListener('DOMContentLoaded', function () {
         unformatOnSubmit: true
     };
 
+    let arrMandor = []
+    const tukangs = @json($tukangs);
+
     new AutoNumeric.multiple('.mandor-salary-input', autoNumericOptions);
     new AutoNumeric.multiple('.tukang-salary-input', autoNumericOptions);
 
@@ -120,6 +123,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 option.disabled = selectedValues.includes(option.value) && option.value !== select.value;
             });
         });
+
+        refreshTukangFields()
+    }
+
+    function refreshTukangFields() {
+        // Cek apakah ada mandor yang dipilih
+        const mandorSelected = Array.from(document.querySelectorAll('.mandor-select')).some(select => select.value !== "");
+
+        // Enable atau disable seluruh field tukang
+        document.querySelectorAll('.worker-select').forEach(select => select.disabled = !mandorSelected);
+        document.querySelectorAll('.tukang-salary-input').forEach(input => input.disabled = !mandorSelected);
+        document.querySelectorAll('.add-worker').forEach(btn => btn.disabled = !mandorSelected);
     }
 
     // ========== Tukang ==========
@@ -147,6 +162,8 @@ document.addEventListener('DOMContentLoaded', function () {
         craftsmanContainer.appendChild(newRow);
         new AutoNumeric(newRow.querySelector('.tukang-salary-input'), autoNumericOptions);
         refreshDropdownDisabling('.worker-select');
+
+        refreshTukangFields()
     }
 
     craftsmanContainer.addEventListener('change', function (e) {
@@ -175,6 +192,8 @@ document.addEventListener('DOMContentLoaded', function () {
         button.addEventListener('click', () => {
             newRow.remove();
             refreshDropdownDisabling('.mandor-select');
+            arrMandor = Array.from(mandorContainer.querySelectorAll('.mandor-select')).map(select => select.value);
+            refreshTukangOptions();
         });
 
         mandorContainer.appendChild(newRow);
@@ -185,8 +204,33 @@ document.addEventListener('DOMContentLoaded', function () {
     mandorContainer.addEventListener('change', function (e) {
         if (e.target.classList.contains('mandor-select')) {
             refreshDropdownDisabling('.mandor-select');
+            arrMandor = Array.from(mandorContainer.querySelectorAll('.mandor-select')).map(select => select.value);
+            refreshTukangOptions();
         }
     });
+
+    function refreshTukangOptions() {
+        console.log('cek worker-select ada berapa:', $('.worker-select').length);
+        $('.worker-select').each(function () {
+            const $select = $(this);
+            $select.empty(); // clear semua option dulu
+
+            let filteredTukang = tukangs;
+
+            console.log('asdasd')
+
+            if (arrMandor.length > 0) {
+                filteredTukang = tukangs.filter(t => arrMandor.includes(t.mandor));
+            }
+
+            // Buat optionnya
+            $select.append('<option value="">-- Pilih Tukang --</option>');
+
+            filteredTukang.forEach(t => {
+                $select.append(`<option value="${t.name}">${t.name}</option>`);
+            });
+        });
+    }
 
     // ========== Date Picker ==========
     $(document).ready(function () {
@@ -194,6 +238,8 @@ document.addEventListener('DOMContentLoaded', function () {
             dateFormat: "d-m-Y"
         });
     });
+
+    refreshTukangFields()
 });
 </script>
 @endpush

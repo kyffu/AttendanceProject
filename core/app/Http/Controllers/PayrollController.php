@@ -65,13 +65,14 @@ class PayrollController extends Controller
         $allowances = DB::table('allowances as a')
             ->leftJoinSub($usedQuotaSub, 't', 't.allow_id', '=', 'a.id')
             ->select('a.id', 'a.name', 'a.quota', 'a.amount', DB::raw('COALESCE(t.cnt, 0) as used_quota'))  // Explicitly select columns and aggregate
-            ->havingRaw('a.quota > COALESCE(SUM(t.cnt), 0)')
+            ->havingRaw('a.quota >= COALESCE(SUM(t.cnt), 0)')
             ->groupBy('a.id', 'a.name', 'a.quota', 'a.amount')  // Group by the selected columns
             ->get();
 
         // Render HTML view with the necessary data
         $html = view('reports.payroll.month', compact('year', 'months', 'username', 'user', 'allowances'))->render();
         return response()->json(['html' => $html], 200);
+        // return response()->json([$usedQuotaSub, $allowances], 200);
     }
     public function show(Request $request)
     {

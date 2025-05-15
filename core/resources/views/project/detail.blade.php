@@ -140,6 +140,9 @@ document.addEventListener('DOMContentLoaded', function () {
         unformatOnSubmit: true
     };
 
+    let arrMandor = []
+    const tukangs = @json($tukangs);
+
     new AutoNumeric.multiple('.mandor-salary-input', autoNumericOptions);
     new AutoNumeric.multiple('.tukang-salary-input', autoNumericOptions);
 
@@ -178,14 +181,65 @@ document.addEventListener('DOMContentLoaded', function () {
         if (e.target.classList.contains('remove-mandor')) {
             e.target.closest('.mandor-item').remove();
             refreshSelectDisabling('.mandor-select');
+            updateRemoveButtonsState();
+
+            arrMandor = Array.from(mandorContainer.querySelectorAll('.mandor-select')).map(select => select.value);
+            refreshTukangOptions();
         }
     });
+
+    // Fungsi untuk mengecek dan disable tombol remove jika tinggal 1
+    function updateRemoveButtonsState() {
+        const mandorItems = mandorContainer.querySelectorAll('.mandor-item');
+        const removeButtons = mandorContainer.querySelectorAll('.remove-mandor');
+        
+        const workerItems = workerContainer.querySelectorAll('.worker-item');
+        const removeButtonsTukang = workerContainer.querySelectorAll('.remove-worker');
+
+        if (mandorItems.length <= 1) {
+            removeButtons.forEach(btn => btn.disabled = true);
+        } else {
+            removeButtons.forEach(btn => btn.disabled = false);
+        }
+
+        if (workerItems.length <= 1) {
+            removeButtonsTukang.forEach(btn => btn.disabled = true);
+        } else {
+            removeButtonsTukang.forEach(btn => btn.disabled = false);
+        }
+    }
+
+   
 
     mandorContainer.addEventListener('change', function (e) {
         if (e.target.classList.contains('mandor-select')) {
             refreshSelectDisabling('.mandor-select');
+
+            arrMandor = Array.from(mandorContainer.querySelectorAll('.mandor-select')).map(select => select.value);
+            refreshTukangOptions();
         }
     });
+
+    function refreshTukangOptions() {
+        console.log('cek worker-select ada berapa:', $('.worker-select').length);
+        $('.worker-select').each(function () {
+            const $select = $(this);
+            $select.empty(); // clear semua option dulu
+
+            let filteredTukang = tukangs;
+
+            if (arrMandor.length > 0) {
+                filteredTukang = tukangs.filter(t => arrMandor.includes(t.mandor));
+            }
+
+            // Buat optionnya
+            $select.append('<option value="">-- Pilih Tukang --</option>');
+
+            filteredTukang.forEach(t => {
+                $select.append(`<option value="${t.name}">${t.name}</option>`);
+            });
+        });
+    }
 
     // Tukang
     const workerContainer = document.getElementById('workers-container');
@@ -209,6 +263,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (e.target.classList.contains('remove-worker')) {
             e.target.closest('.worker-item').remove();
             refreshSelectDisabling('.worker-select');
+            updateRemoveButtonsState();
         }
     });
 
@@ -238,6 +293,8 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('projectForm').setAttribute('action',
             "{{ route('project.update') }}");
     });
+
+     updateRemoveButtonsState();
 });
 </script>
 @endpush

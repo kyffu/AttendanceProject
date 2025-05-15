@@ -33,10 +33,11 @@ class ProjectController extends Controller
     public function create()
     {
         if (hasRole(['superadmin', 'pm'])) {
-            $tukangs = DB::table('users')
-                ->join('roles', 'users.role_id', '=', 'roles.id')
+            $tukangs = DB::table('users as tukang')
+                ->join('roles', 'tukang.role_id', '=', 'roles.id')
+                ->leftJoin('users as mandor', 'tukang.parent_id', '=', 'mandor.id')
                 ->where('roles.name', 'tukang')
-                ->select('users.id', 'users.name')
+                ->select('tukang.id', 'tukang.name', 'mandor.name as mandor')
                 ->get();
 
             $mandors = DB::table('users')
@@ -139,11 +140,12 @@ class ProjectController extends Controller
             $id = Crypt::decryptString($id);
             $project = Projects::where('id', $id)->with('foreman', 'validator')->firstOrFail();
             $data_tukangs = ProjectWorkers::where('project_id', $id)->where('is_mandor', false)->get();
-            $tukangs = DB::table('users')
-            ->join('roles', 'users.role_id', '=', 'roles.id')
-            ->where('roles.name', 'tukang')
-            ->select('users.id', 'users.name')
-            ->get();
+            $tukangs = DB::table('users as tukang')
+                ->join('roles', 'tukang.role_id', '=', 'roles.id')
+                ->leftJoin('users as mandor', 'tukang.parent_id', '=', 'mandor.id')
+                ->where('roles.name', 'tukang')
+                ->select('tukang.id', 'tukang.name', 'mandor.name as mandor')
+                ->get();
             
             $data_mandors = ProjectWorkers::where('project_id', $id)->where('is_mandor', true)->get();
             $mandors = DB::table('users')

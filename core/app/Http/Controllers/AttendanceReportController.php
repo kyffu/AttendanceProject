@@ -152,6 +152,18 @@ class AttendanceReportController extends Controller
             $dates[] = $date->format('Y-m-d');
         }
         $users = User::with('attendances')->where('id', $user)->firstOrFail();
+
+        $jamTerlambat = Carbon::createFromTime(8, 30, 0, 'Asia/Jakarta');
+        $users->attendances->transform(function ($attendance) use ($jamTerlambat) {
+            $timeIn = Carbon::parse($attendance->time_in)->setTimezone('Asia/Jakarta');
+            if ($timeIn->format('H:i') > $jamTerlambat->format('H:i')) {
+                $attendance->is_late = true;
+                $attendance->note = 'Terlambat';
+            }
+
+            return $attendance;
+        });
+
         $client = new Google_Client();
         $client->setAuthConfig(storage_path('app/service-account.json')); // Path to service account JSON
         $client->setScopes(Google_Service_Calendar::CALENDAR_READONLY);
@@ -177,7 +189,9 @@ class AttendanceReportController extends Controller
         }
         if ($request->method === 'GET') {
             $html = view('attendance.staffreport.view', compact('dates', 'users', 'title', 'holidays'))->render();
+            // return response()->json(['html' => $html], 200);
             return response()->json(['html' => $html], 200);
+            // return response()->json([$users], 200);
         } elseif ($request->method === 'EXCEL') {
             $data = [
                 'dates' => $dates,

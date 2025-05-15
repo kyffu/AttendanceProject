@@ -1,5 +1,13 @@
 @extends('layouts.app')
 @section('title', 'Detail Proyek')
+
+@php
+    use Carbon\Carbon;
+    $startDate = Carbon::parse($project->start_date);
+    $endDate = Carbon::parse($project->end_date);
+    $diffInDays = $startDate->diffInDays($endDate);
+@endphp
+
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="row">
@@ -46,7 +54,7 @@
                                                 <td>{{ $data_mandor->worker_name }}
                                                     <input type="hidden" name="mandor_wrid[]" value="{{ Crypt::encryptString($data_mandor->id) }}">
                                                 </td>
-                                                <td><input type="text" name="mandor_working_days[]" class="form-control" value="{{ $data_mandor->working_days }}" onkeypress="return mustNumber(event)" required></td>
+                                                <td><input type="text" name="mandor_working_days[]" class="form-control" value="{{ $data_mandor->working_days == 0 ? $diffInDays : $data_mandor->working_days }}" onkeypress="return mustNumber(event)" required></td>
                                                 <td><input type="text" name="mandor_salary_day[]" class="form-control" value="{{ $data_mandor->salary_day }}" required></td>
                                                 <td><input type="text" name="mandor_total[]" class="form-control bg-label-dark" readonly></td>
                                             </tr>
@@ -79,7 +87,7 @@
                                                 <td>{{ $data_tukang->worker_name }}
                                                     <input type="hidden" name="wrid[]" value="{{ Crypt::encryptString($data_tukang->id) }}">
                                                 </td>
-                                                <td><input type="text" name="working_days[]" class="form-control" value="{{ $data_tukang->working_days }}" onkeypress="return mustNumber(event)" required></td>
+                                                <td><input type="text" name="working_days[]" class="form-control" value="{{ $data_mandor->working_days == 0 ? $diffInDays : $data_mandor->working_days }}" onkeypress="return mustNumber(event)" required></td>
                                                 <td><input type="text" name="salary_day[]" class="form-control" value="{{ $data_tukang->salary_day }}" required></td>
                                                 <td><input type="text" name="total[]" class="form-control bg-label-dark" readonly></td>
                                             </tr>

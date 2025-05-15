@@ -26,10 +26,13 @@
                 @else
                     <tr>
                         <td>{{ \Carbon\Carbon::parse($attendance['date'])->format('d-m-y') }}</td>
-                        <td> {{ isset($attendance['time_in']) ? \Carbon\Carbon::parse($attendance['time_in'])->format('H:i:s') : 'N/A' }}
-                        </td>
-                        <td> {{ isset($attendance['time_out']) ? \Carbon\Carbon::parse($attendance['time_out'])->format('H:i:s') : 'N/A' }}
-                        </td>
+                        @if(isset($attendance['is_late']) && $attendance['is_late'])
+                        <td class="text-danger"> {{ isset($attendance['time_in']) ? \Carbon\Carbon::parse($attendance['time_in'])->format('H:i:s') : 'N/A' }}</td>
+                        <td class="text-danger"> {{ isset($attendance['time_out']) ? \Carbon\Carbon::parse($attendance['time_out'])->format('H:i:s') : 'N/A' }}</td>
+                        @else
+                        <td> {{ isset($attendance['time_in']) ? \Carbon\Carbon::parse($attendance['time_in'])->format('H:i:s') : 'N/A' }}</td>
+                        <td> {{ isset($attendance['time_out']) ? \Carbon\Carbon::parse($attendance['time_out'])->format('H:i:s') : 'N/A' }}</td>
+                        @endif
                         <td>{{ $attendance['status'] }}</td>
                     </tr>
                 @endif

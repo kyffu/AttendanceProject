@@ -69,8 +69,15 @@
                                     <td class="text-center text-danger"><i class="bx bx-x"></i></td>
                                     <td>{{$absence->master->name}}</td>
                                 @elseif ($attendance)
-                                    <td>{{ \Carbon\Carbon::parse($attendance->time_in)->format('H:i:s') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($attendance->time_out)->format('H:i:s') }}</td>
+
+                                    @if(isset($attendance['is_late']) && $attendance['is_late'])
+                                    <td class="text-center text-danger">{{ \Carbon\Carbon::parse($attendance->time_in)->format('H:i:s') }}</td>
+                                    <td class="text-center text-danger">{{ \Carbon\Carbon::parse($attendance->time_out)->format('H:i:s') }}</td>
+                                    @else
+                                    <td class="text-center">{{ \Carbon\Carbon::parse($attendance->time_in)->format('H:i:s') }}</td>
+                                    <td class="text-center">{{ \Carbon\Carbon::parse($attendance->time_out)->format('H:i:s') }}</td>
+                                    @endif
+                                    
                                     <td class="text-center">
                                         <button type="button" class="btn p-0 attendance-validate"
                                             data-bs-toggle="modal" data-bs-target="#modalCenter"
@@ -83,12 +90,12 @@
                                             <i class='bx bx-show text-primary'></i>
                                         </button>
                                     </td>
-                                    <td></td>
+                                    <td>{{ isset($attendance['note']) && $attendance['note'] ? ($attendance['note']) : '' }}</td>
                                 @else
-                                    <td>-</td>
-                                    <td>-</td>
+                                    <td class="text-center">-</td>
+                                    <td class="text-center">-</td>
                                     <td class="text-center text-danger"><i class="bx bx-x"></i></td>
-                                    <td></td>
+                                    <td class="text-center"></td>
                                 @endif
                             @endif
                         </tr>

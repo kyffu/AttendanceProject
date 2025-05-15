@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Validator;
 use Alert;
-use App\Models\Attendances;
-use App\Models\Absents;
-use App\Models\User;
+use DateTime;
+use Validator;
 use Carbon\Carbon;
-use Carbon\CarbonPeriod;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Crypt;
-use Intervention\Image\ImageManagerStatic as Image;
 use Google_Client;
+use App\Models\User;
+use App\Models\Absents;
+use Carbon\CarbonPeriod;
+use App\Models\Attendances;
 use Google_Service_Calendar;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\ImageManagerStatic as Image;
 
 class AttendanceController extends Controller
 {
@@ -110,6 +111,15 @@ class AttendanceController extends Controller
                 if (isset($attendance->time_in) && isset($attendance->time_out)) {
                     if ($attendance->approved == 2 && $attendance->approved_out == 2) {
                         $status = "Hadir";
+
+                        $timeIn = Carbon::parse($attendance->time_in)->setTimezone('Asia/Jakarta');
+                        $jamTerlambat = Carbon::createFromTime(8, 30, 0, 'Asia/Jakarta'); // Jam 08:30 WIB
+
+                        if ($timeIn->format('H:i') > $jamTerlambat->format('H:i')) {
+                            $status .= " ( Terlambat )";
+                            $attendance->is_late = true;
+                        }
+
                     } else {
                         $status = "Menunggu Persetujuan";
                     }
@@ -121,6 +131,7 @@ class AttendanceController extends Controller
                     'date' => $date,
                     'time_in' => $attendance->time_in,
                     'time_out' => $attendance->time_out,
+                    'is_late' => $attendance->is_late,
                     'status' => $status
                 ];
             } else {
@@ -157,6 +168,7 @@ class AttendanceController extends Controller
         $html = view('attendance.report', compact('lists','holidays'))->render();
         return response()->json($html, 200);
         // dd($lists);
+        // return response([$lists, $holidays]);
     }
 
     public function attendance()
