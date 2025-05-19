@@ -24,7 +24,9 @@ class PayrollController extends Controller
     public function index()
     {
         if (hasRole(['admin', 'superadmin'])) {
-            $users = User::orderBy('name')->get();
+            $users = User::with('attendances')
+            ->orderBy('users.name')
+            ->get();
         }
         else if (hasRole(['spv', 'mandor'])) {
             $users = User::with('attendances')
@@ -34,7 +36,10 @@ class PayrollController extends Controller
             ->get();
         } 
         else{
-            $users = User::where('id',auth()->user()->id)->firstOrFail();
+            $users = User::with('attendances')
+            ->where('users.id', auth()->user()->id)
+            ->orderBy('users.name')
+            ->get();
         }
         $years = Attendances::distinct()
                 ->selectRaw('YEAR(created_at) as year')

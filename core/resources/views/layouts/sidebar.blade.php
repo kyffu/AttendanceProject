@@ -16,7 +16,7 @@
 
     <ul class="menu-inner py-1">
 
-        @role(['karyawan','mandor','tukang','spv','superadmin'])
+        @role(['karyawan','mandor','tukang','spv','superadmin','karyawan'])
         <li class="menu-item {{ request()->is('attendances*') ? 'active' : '' }}">
             <a href="" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-notepad"></i>
@@ -38,7 +38,7 @@
                         <div data-i18n="Basic">Lembur</div>
                     </a>
                 </li>
-                @role(['spv', 'superadmin'])
+                @role(['superadmin', 'karyawan', 'spv'])
                 <li class="menu-item {{ request()->is('attendances/reimburse*') ? 'active' : '' }}">
                     <a href="{{ route('attendance.reimburse.index') }}" class="menu-link">
                         <div data-i18n="Basic">Reimburse</div>
@@ -63,7 +63,7 @@
             </a>
         </li>
         @endrole
-        @role(['superadmin', 'spv', 'mandor'])
+        @role(['superadmin', 'spv', 'mandor', 'karyawan'])
         <li class="menu-item {{ request()->is('reports*') ? 'active' : '' }}">
             <a href="" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bxs-report"></i>

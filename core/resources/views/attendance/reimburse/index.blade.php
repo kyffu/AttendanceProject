@@ -6,9 +6,11 @@
         <div class="card">
             <div style="display: flex; justify-content: space-between; align-items: center;" class="card-header">
                 <h5>Daftar Reimburse</h5>
+                @role(['karyawan','superadmin'])
                 <div class="d-flex justify-content-end">
                     <a href="{{ route('attendance.reimburse.create') }}" class="btn btn-primary ">Tambah</a>
                 </div>
+                @endrole
             </div>
             <div class="card-body">
                 <div class="table-responsive text-nowrap">

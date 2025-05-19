@@ -21,11 +21,13 @@
                             </td>
                             <td>
                                  
+                                @role(['superadmin', 'spv', 'mandor'])
                                 <button type="button" class="btn btn-icon btn-dark btn-allow" data-bs-toggle="modal"
                                     data-bs-target="#modalAllowance"
                                     data-payroll="{{ Crypt::encryptString($year . '-' . $month->month . '/' . $user) }}">
                                     <span class="tf-icons bx bx-money"></span>
                                 </button>
+                                @endrole
                                  
                                 <button type="button" class="btn btn-icon btn-primary btn-payroll"
                                     data-bs-toggle="modal" data-bs-target="#modalPayroll"

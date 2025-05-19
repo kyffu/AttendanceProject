@@ -118,7 +118,9 @@ class AttendanceReportController extends Controller
             ->get()
             ->pluck("year");
         if (hasRole(['admin', 'superadmin'])) {
-            $users = User::orderBy('name')->get();
+            $users = User::with('attendances')
+            ->orderBy('users.name')
+            ->get();
         } 
 
         else if (hasRole(['spv', 'mandor'])) {
@@ -130,7 +132,10 @@ class AttendanceReportController extends Controller
         } 
         
         else {
-            $users = User::where('id', auth()->user()->id)->firstOrFail();
+            $users = User::with('attendances')
+            ->where('users.id', auth()->user()->id)
+            ->orderBy('users.name')
+            ->get();
         }
         
         return view('attendance.staffreport.index', compact('months', 'years', 'users'));
