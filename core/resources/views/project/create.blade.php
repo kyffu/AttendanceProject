@@ -48,11 +48,10 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4 d-flex align-items-end">
+                                    <button type="button" class="btn btn-secondary add-mandor ms-2">+</button> 
                                     <div class="form-group w-100">
-                                        <label>Upah per Hari</label>
-                                        <input type="text" name="mandor_salary_day[]" class="form-control mandor-salary-input" required>
+                                        <input type="hidden" name="mandor_salary_day[]" class="form-control mandor-salary-input" value="0">
                                     </div>
-                                    <button type="button" class="btn btn-secondary add-mandor ms-2">+</button>
                                 </div>
                             </div>
                         </div>

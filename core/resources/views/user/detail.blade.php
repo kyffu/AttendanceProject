@@ -117,6 +117,7 @@
             </div>
 
             @role(['superadmin', 'admin'])
+            @if($can_delete)
             <div class="card-body">
                 <div class="mb-3 col-12 mb-0">
                     <div class="alert alert-danger">
@@ -137,6 +138,7 @@
                     <button type="submit" class="btn btn-danger deactivate-account">Deactivate Account</button>
                 </form>
             </div>
+            @endif
             @endrole
         </div>
     </div>

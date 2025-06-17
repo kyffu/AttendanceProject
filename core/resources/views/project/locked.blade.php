@@ -44,8 +44,8 @@
                                         <tr>
                                             <th>Nama Mandor</th>
                                             <th>Jumlah Hari Kerja</th>
-                                            <th>Upah per Hari</th>
-                                            <th>Total</th>
+                                            <th class="d-none">Upah per Hari</th>
+                                            <th class="d-none">Total</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -55,13 +55,13 @@
                                                     <input type="hidden" name="mandor_wrid[]" value="{{ Crypt::encryptString($data_mandor->id) }}">
                                                 </td>
                                                 <td><input type="text" name="mandor_working_days[]" class="form-control" value="{{ $data_mandor->working_days == 0 ? $diffInDays : $data_mandor->working_days }}" onkeypress="return mustNumber(event)" required></td>
-                                                <td><input type="text" name="mandor_salary_day[]" class="form-control" value="{{ $data_mandor->salary_day }}" required></td>
-                                                <td><input type="text" name="mandor_total[]" class="form-control bg-label-dark" readonly></td>
+                                                <td class="d-none"><input type="text" name="mandor_salary_day[]" class="form-control" value="{{ $data_mandor->salary_day }}" required></td>
+                                                <td class="d-none"><input type="text" name="mandor_total[]" class="form-control bg-label-dark" readonly></td>
                                             </tr>
                                         @endforeach
                                     </tbody>
                                     <tfoot>
-                                        <tr>
+                                        <tr class="d-none">
                                             <td colspan="3" class="text-center"><strong>TOTAL UPAH MANDOR</strong></td>
                                             <td id="mandor_totals"></td>
                                         </tr>
@@ -98,7 +98,7 @@
                                             <td colspan="3" class="text-center"><strong>TOTAL UPAH TUKANG</strong></td>
                                             <td id="totals"></td>
                                         </tr>
-                                        <tr style="border-top: 3px solid #dee2e6;">
+                                        <tr style="border-top: 3px solid #dee2e6;" class="d-none">
                                             <td colspan="3" class="text-center pt-3"><strong>TOTAL UPAH KESELURUHAN</strong></td>
                                             <td id="totalsAll"></td>
                                         </tr>

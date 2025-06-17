@@ -57,12 +57,11 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-4">
-                                            <label>Upah per Hari</label>
-                                            <input type="text" name="mandor_salary_day[]" class="form-control mandor-salary-input" value="{{ $data_mandor->salary_day }}" required>
-                                        </div>
-                                        <div class="col-md-2 d-flex align-items-end">
+                                         <div class="col-md-2 d-flex align-items-end">
                                             <button type="button" class="btn btn-danger remove-mandor">X</button>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input type="text" name="mandor_salary_day[]" class="form-control mandor-salary-input" value="{{ $data_mandor->salary_day }}" required hidden>
                                         </div>
                                     </div>
                                 @endforeach

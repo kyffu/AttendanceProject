@@ -52,8 +52,8 @@
                                         <tr>
                                             <th>Nama Mandor</th>
                                             <th>Jumlah Hari Kerja</th>
-                                            <th>Upah per Hari</th>
-                                            <th>Total</th>
+                                            <th class="d-none">Upah per Hari</th>
+                                            <th class="d-none">Total</th>
                                         </tr>
                                     </thead>
                                     @php
@@ -63,14 +63,14 @@
                                         <tr>
                                             <td>{{ $data_mandor->worker_name }}</td>
                                             <td>{{ $data_mandor->working_days }}</td>
-                                            <td class="amount">{{ $data_mandor->salary_day }}</td>
-                                            <td class="amount">{{ $data_mandor->total_salary }}</td>
+                                            <td class="d-none" class="amount">{{ $data_mandor->salary_day }}</td>
+                                            <td class="d-none" class="amount">{{ $data_mandor->total_salary }}</td>
                                         </tr>
                                         @php
                                             $total += $data_mandor->total_salary;
                                         @endphp
                                     @endforeach
-                                    <tfoot>
+                                    <tfoot class="d-none">
                                         <tr>
                                             <td colspan="3" class="text-center"><strong>TOTAL UPAH MANDOR</strong></td>
                                             <td class="total">{{ $total }}</td>
@@ -110,7 +110,7 @@
                                             <td colspan="3" class="text-center"><strong>TOTAL UPAH TUKANG</strong></td>
                                             <td class="total">{{ $total }}</td>
                                         </tr>
-                                        <tr style="border-top: 3px solid #dee2e6;">
+                                        <tr style="border-top: 3px solid #dee2e6;" class="d-none">
                                             <td colspan="3" class="text-center pt-3"><strong>TOTAL UPAH KESELURUHAN</strong></td>
                                             <td id="totalsAll"></td>
                                         </tr>

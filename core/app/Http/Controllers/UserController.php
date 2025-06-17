@@ -137,7 +137,22 @@ class UserController extends Controller
             ->where('roles.slug', 'mandor')
             ->orWhere('roles.slug', 'spv')
             ->get();
-        return view('user.detail', compact('user', 'shifts', 'positions', 'roles', 'parents'));
+
+        $can_delete = false;
+
+        $admin = auth()->user();
+
+        if ($admin->role == 'Superadmin') {
+            $can_delete = true;
+        }
+
+        if ($admin->role == 'Admin') {
+            if ($user->role != 'Admin' && $user->role != 'Superadmin') {
+                $can_delete = true;
+            }
+        }
+
+        return view('user.detail', compact('user', 'shifts', 'positions', 'roles', 'parents', 'can_delete'));
     }
 
     public function update(Request $request)
